@@ -17,6 +17,7 @@ func main() {
    if addr == nil {
       fmt.Println("Invalid address")
    } else {
+      fmt.Println("The address is ", addr) // ParseIP returns IP type []byte
       fmt.Println("The address is ", addr.String())
    }
 
