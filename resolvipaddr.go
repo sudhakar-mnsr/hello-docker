@@ -14,7 +14,7 @@ func main() {
    }
    name := os.Args[1]
 
-   addr, err := net.ResolvIPAddr("ip", name)
+   addr, err := net.ResolveIPAddr("ip", name)
    if err != nil {
       fmt.Println("Resolution error", err.Error())
       os.Exit(1)
