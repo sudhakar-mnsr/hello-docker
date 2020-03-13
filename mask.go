@@ -26,7 +26,7 @@ func main() {
    network := addr.Mask(mask)
    fmt.Println("Address is ", addr.String(),
                "\nMask length is ", bits,
-               "\nLeading ones count is " ones,
+               "\nLeading ones count is ", ones,
                "\nMask is (hex) ", mask.String,
                "\nNetwork is ", network.String())
    os.Exit(0)
