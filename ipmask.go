@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-   if len(os.Args) != 2
+   if len(os.Args) != 2 {
       fmt.Fprintf(os.Stderr, "Usage %s dotted IP addr\n", os.Args[0])
       os.Exit(1)
    }
