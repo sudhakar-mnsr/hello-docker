@@ -48,3 +48,25 @@ func main() {
    msg[3] = byte(check & 255)
 
    // send the message
+   _, err = conn.Write(msg[0:len])
+   checkError(err)
+   
+   fmt.Print("Message sent:   ")
+   for n := 0; n < 8; n++ {
+      fmt.Print(" ", msg[n])
+   }
+   fmt.Println()
+
+   // recieve a reply
+   size, err2 := conn.Read(msg[0:])
+   checkError(err2)
+
+   fmt.Print("Message recieved:")
+   for n := ipv4HeaderSize; n < size; n++ {
+      fmt.Print(" ", msg[n])
+   }
+   fmt.Println()
+   os.Exit(0)
+}
+
+
