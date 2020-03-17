@@ -44,7 +44,7 @@ func main() {
          conn.Close()
          continue
       }
-      fmt.Println("connected to : ", conn.RemoveAddr())
+      fmt.Println("connected to : ", conn.RemoteAddr())
       go handleConnection(conn)
    }
 } 
@@ -55,7 +55,7 @@ func main() {
 
 func handleConnection(conn *net.TCPConn) {
    defer conn.Close()
-   buff := make([]byte, 1024)
+   buf := make([]byte, 1024)
 
    n, err := conn.Read(buf)
    if err != nil {
