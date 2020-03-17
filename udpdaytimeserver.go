@@ -15,9 +15,9 @@ func main() {
    conn, err := net.ListenUDP("udp", udpAddr)
    checkError(err)
 
-   // for {
+   for {
       handleClient(conn)
-   // }
+   }
 }
 
 func handleClient(conn *net.UDPConn) {
