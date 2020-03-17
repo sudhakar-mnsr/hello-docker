@@ -31,4 +31,21 @@ func main() {
       fmt.Println(err)
       os.Exit(1)
    }
+   defer l.Close()
+   fmt.Println("listening at (tcp)", laddr.String())
 
+   // req/resp loop
+   for {
+      // use TCPListener to block and wait for TCP
+      // connection request using AcceptTCP which creates a TCPConn
+      conn, err := l.AcceptTCP()
+      if err != nil {
+         fmt.Println("failed to accept conn:", err)
+         conn.Close()
+         continue
+      }
+      fmt.Println("connected to : ", conn.RemoveAddr())
+      go handleConnection(conn)
+   }
+} 
+   
