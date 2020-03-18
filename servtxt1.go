@@ -105,3 +105,5 @@ func handleConnection(conn net.Conn) {
       return dest, nil
    }
 
+   // loop to stay connected with client until client breaks connection
+   for {
