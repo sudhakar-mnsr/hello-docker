@@ -80,3 +80,28 @@ func main() {
 		go handleConnection(conn)
 	}
 }
+
+func handleConnection(conn net.Conn) {
+   defer func() {
+      if err := conn.Close(); err != nil {
+         log.Println("error closing connection:", err)
+      }
+   }()
+   if _, err := conn.Write([]byte("Connected...\nUsage: GET <currency, country, or code>\n)); err != nil {
+      log.Println("error writing:", err)
+      return
+   }
+   // appendBytes is a func that simulates end-of-File marker error.
+   // Since we will using streaming IO on top of a streaming protocol,
+   // there may never be an actual EOF marker. So this function simulates
+   // and io.EOF using char '\n'
+   appendBytes := func(dest, src []byte) ([]byte, error) {
+      for _, b := range src {
+         if b == '\n' {
+            return dest, io.EOF
+         }
+         dest = append(dest, b)
+      }
+      return dest, nil
+   }
+
