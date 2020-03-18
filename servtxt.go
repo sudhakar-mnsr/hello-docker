@@ -64,4 +64,78 @@ func main() {
    log.Println("**** Global Currency Service ****")
    log.Printf("Service started: (%s) %s\n", network, addr)
 
+   // connection-loop - handle incoming requests
+   for {
+      conn, err := ln.Accept()
+      if err != nil {
+         fmt.Println(err)
+         if err := conn.Close(); err != nil {
+            log.Println("Failed to close listener:", err)
+         }
+         continue
+      }
+      log.Println("Connected to", conn.RemoteAddr())
 
+      go handleConnection(conn)
+   }
+}
+
+func handleConnection(conn net.Conn) {
+   defer func() {
+      if err := conn.Close(); err != nil {
+         log.Println("error closing connection:", err)
+      }
+   }()
+   if _, err := conn.Write([]byte("Connected...\nUsage: GET <currency, country, or code>\n")); err != nil {
+      log.Println("error writing:", err)
+      return
+   }
+
+   // loop to stay connected with client until client breaks connection
+   for {
+      // buffer for client command
+      cmdLine := make([]byte, (1024 * 4))
+      n, err := conn.Read(cmdLine)
+      if n == 0 || err != nil {
+         log.Println("connection read error:", err)
+         return
+      }
+      cmd, param := parseCommand(string(cmdLine[0:n]))
+      if cmd == "" {
+         if _, err := conn.Write([]byte("Invalid command\n")); err != nil {
+            log.Println("failed to write:", err)
+            return
+         }
+         continue
+      }
+  
+      // execute command
+      switch strings.ToUpper(cmd) {
+      case "GET":
+         result := curr.Find(currencies, param)
+         if len(result) == 0 {
+            if _, err := conn.Write([]byte("Nothing found\n")); err != nil {
+               log.Println("failed to write:", err)
+            }
+            continue
+         }
+         // send each currency info as a line to the cient with fmt.Fprintf()
+         for _, cur := range result {
+            _, err := conn.Write([]byte(
+            fmt.Sprintf("%s %s %s %s\n",
+            cur.Name, cur.Code, cur.Number, cur.Country,
+            ),
+            ))
+            if err != nil {
+               log.Println("failed to write response:", err)
+               return
+            }
+         }
+      default:
+         if _, err := conn.Write([]byte("Invalid command\n)); err != nil {
+            log.Println("failed to write", err)
+            return
+         }
+      }
+   }
+}          
