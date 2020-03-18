@@ -35,7 +35,7 @@ func main() {
    l, err := net.Listen(network, addr)
    if err != nil {
       fmt.Println(err)
-      os.Eit(1)
+      os.Exit(1)
    }
    defer l.Close() 
    fmt.Printf("listening at (%s) %s\n", network, addr)
@@ -53,7 +53,7 @@ func main() {
       }
       fmt.Println("connected to: ", conn.RemoteAddr())
 
-      go handleConection(conn)
+      go handleConnection(conn)
    }
 }
 
