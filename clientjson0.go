@@ -7,7 +7,7 @@ import (
 	"net"
 	"os"
 
-	curr "currency"
+	curr "currency1"
 )
 
 const prompt = "currency"
@@ -30,7 +30,7 @@ const prompt = "currency"
 //  
 func main() {
    // setup flags
-   var add string
+   var addr string
    var network string
    flag.StringVar(&addr, "e", "localhost:4040", "service endpoint")
    flag.StringVar(&network, "n", "tcp", "network protocol")
@@ -52,9 +52,9 @@ func main() {
    for {
       fmt.Println("Enter search string or *")
       fmt.Print(prompt, "> ")
-      _, err = fmt.Scanf(%s", &param)
+      _, err = fmt.Scanf("%s", &param)
       if err != nil {
-         fmt.Println(Usage: <search string or *>")
+         fmt.Println("Usage: <search string or *>")
          continue
       }
       req := curr.CurrencyRequest{Get: param}

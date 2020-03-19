@@ -50,7 +50,7 @@ func Load(path string) []Currency {
    return table
 }
 
-func Find(table []currency, filter string) []Currency {
+func Find(table []Currency, filter string) []Currency {
    if filter == "" || filter == "*" {
       return table
    }
