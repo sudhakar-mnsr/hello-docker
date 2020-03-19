@@ -98,7 +98,7 @@ func handleConnection(conn net.Conn) {
 
    // command-loop
    for {
-      cmdLIne, err := reader.ReadString('\n')
+      cmdLine, err := reader.ReadString('\n')
       if err != nil {
          if err != io.EOF {
             log.Println("connection read error:", err)
