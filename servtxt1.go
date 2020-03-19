@@ -87,7 +87,7 @@ func handleConnection(conn net.Conn) {
          log.Println("error closing connection:", err)
       }
    }()
-   if _, err := conn.Write([]byte("Connected...\nUsage: GET <currency, country, or code>\n)); err != nil {
+   if _, err := conn.Write([]byte("Connected...\nUsage: GET <currency, country, or code>\n")); err != nil {
       log.Println("error writing:", err)
       return
    }
