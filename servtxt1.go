@@ -107,3 +107,63 @@ func handleConnection(conn net.Conn) {
 
    // loop to stay connected with client until client breaks connection
    for {
+      // buffer for client command
+      var cmdLine []byte
+ 
+      // stream data using 4-byte chunks io.EOF
+      // the chunks are kept small for demonstration
+      for {
+         chunk := make([]byte, 4)
+         n, err := conn.Read(chunk)
+         if err != nil {
+            // io.EOF may never happen since this is a stream
+            if err == io.EOF {
+               cmdLine, _ = appendBytes(cmdLine, chunk[:n]) // read bytes
+               break
+            }
+            log.Println("connection read error:", err)
+            return
+         }
+         if cmdLine, err = appendBytes(cmdLine, chunk[:n]); err == io.EOF {
+            break
+         }
+      }
+      cmd, param := parseCommand(string(cmdLine))
+      if cmd == "" {
+         if _, err := conn.Write([]byte("Invalid command\n")); err != nil {
+            log.Println("failed to write:", err)
+            return
+         }
+         continue
+      }
+
+      // execute command
+      switch strings.ToUpper(cmd) {
+      case "GET":
+         result := curr.Find(currencies, param)
+         if len(result) == 0 {
+            if _, err := conn.Write([]byte("Nothing found\n")); err != nil {
+               log.Println("failed to write:", err)
+            }
+            continue
+         }
+         // send each currency info as a line to the client with fmt.Fprintf
+         for _, cur := range result {
+            _, err := conn.Write([]byte(
+                      fmt.Sprintf(
+                      "%s %s %s %s\n",
+                      cur.Name, cur.Code, cur.Number, cur.Country,
+                      ),))
+            if err != nil {
+               log.Println("failed to write response:", err)
+               return
+            }
+         }
+      default:
+         if _, err := conn.Write([]byte("Invalid command\n")); err != nil {
+            log.Println("failed to write:", err)
+            return
+         }
+      }
+   }
+}
