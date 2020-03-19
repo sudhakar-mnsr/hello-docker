@@ -86,3 +86,44 @@ func main() {
       go handleConnection(conn)
    }
 }
+
+func handleConnection(conn net.Conn) {
+   defer func() {
+      if err := conn.Close(); err != nil {
+         log.Println("error closing connection:", err)
+      }
+   }()
+
+   reader := bufio.NewReaderSize(conn, 4)
+
+   // command-loop
+   for {
+      // reader will read bytes until '}' is encounter which
+      // should indicate the end of JSON object i.e {"get":"US"}
+      buf, err := reader.ReadSlice('}')
+      if err != nil {
+         if err != io.EOF {
+            log.Println("connection read error", err)
+            return
+         }
+      }
+      reader.Reset(conn)
+      // unmarshal request into value of type curr.CurrencyRequest
+      var req curr.CurrencyRequest
+      if err := json.Unmarshal(buf, &req); err != nil {
+         log.Println("failed to unmarshal request:", err)
+         // inform the client of bad request by marshalling
+         //curr.CurrencyError value as JSON to the client.
+         // This could be wrapped in its own function.
+         cerr, jerr := json.Marshal(&curr.CurrencyError{Error: err.Error()})
+         if jerr != nil {
+            log.Println("failed to marshal CurrencyError:", jerr)
+            continue
+         }
+         if _, werr := conn.Write(cerr); werr != nil {
+            log.Println("failed to write to CurrencyError:", werr)
+            return
+         }
+         continue
+      }       
+
