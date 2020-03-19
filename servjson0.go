@@ -10,7 +10,7 @@ import (
 	"net"
 	"os"
 
-	curr "currency"
+	curr "currency1"
 )
 
 var (
