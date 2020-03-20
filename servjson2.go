@@ -81,3 +81,48 @@ func main() {
       go handleConnection(conn)
    }
 }
+
+// handle client connection
+func handleConnection(conn net.Conn) {
+   defer func() {
+      if err := conn.Close(); err != nil {
+         log.Println("error closing connection:", err)
+      }
+   }()
+
+   // command-loop
+   for {
+      dec := json.NewDecoder(conn)
+      // Next decode the incoming data into Go value curr.CurrencyRequest
+      var req curr.CurrencyRequest
+      if err := dec.Decode(&req); err != nil {
+         // json.Decode() could return decoding err,
+         // io err, or networking err. This makes error handling
+         // a little more complex.
+
+         // handle error based on error type
+         switch err := err.(type) {
+         // network error: disconnect
+         case net.Error:
+            // dont continue, break connection
+            fmt.Println("network error:", err)
+            return
+
+         // other errors: send error info to client, then continue
+         default:
+            if err == io.EOF {
+               fmt.Println("closing connection:", err)
+               return
+            }
+            // encode curr.CurrencyError to send to client
+            enc := json.NewEncoder(conn)
+            if encerr := enc.Encode(&curr.CurrencyError{Error: err.Error()}); encerr != nil {
+               // if failure at this point, drop connection
+               fmt.Println("failed error encoding:", encerr)
+               return
+            }
+            continue
+         }
+      }
+   } 
+    
