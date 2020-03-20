@@ -92,4 +92,28 @@ func main() {
    var param string
 
    // repl
+   for {
+      fmt.Print(prompt, "> ")
+      _, err = fmt.Scanf("%s", &param)
+      if err != nil {
+         fmt.Println("Usage: <search string or *>")
+         continue
+      }
 
+      req := curr.CurrencyRequest{Get: param}
+
+   //Send Request:
+   // use json encoder to encode value of type curr.CurrencyRequest
+   // and stream it to the server via net.Conn.
+   if err := json.NewEncoder(conn).Encode(&req); err != nil {
+      switch err := err.(type) {
+      case net.Error:
+         fmt.Println("failed to send request:", err)
+         os.Exit(1)
+      default:
+         fmt.Println("failed to encode request:", err)
+         continue
+      }
+   }
+   
+   //
