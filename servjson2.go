@@ -68,6 +68,8 @@ func main() {
       os.Exit(1)
    }
    defer ln.Close()
+   log.Println("**** Global Currency Service ***")
+   log.Printf("Service started: (%s) %s\n", network, addr)
   
    // connection loop
    for {
