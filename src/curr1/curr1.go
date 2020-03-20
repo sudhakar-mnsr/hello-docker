@@ -46,3 +46,20 @@ func Load(path string) []Currency {
    }
    return table
 }
+
+func Find(table []Currency, filter string) []Currency {
+   if filter == "" || filter == "*" {
+      return table
+   }
+   result := make([]Currency, 0)
+   filter = strings.ToUpper(filter)
+   for _, cur := range table {
+      if cur.Code == filter || 
+         cur.Number == filter ||
+         strings.Contains(strings.ToUpper(cur.Country), filter) ||
+         strings.Contains(strings.ToUpper(cur.Name), filter) {
+         result = append(result, cur)
+      }
+   }
+   return result
+}
