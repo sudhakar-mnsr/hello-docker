@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"learning-go/ch11/curr1"
+	"curr1"
 	"net"
 	"os"
 	"time"
@@ -14,23 +14,23 @@ import (
 
 const prompt = "currency"
 
-This program is a client implementation for the currency service
-program. It sends JSON-encoded requests, i.e. {"Get":"USD"} and
-receives JSON-encoded array of currency information directly
-over TCP or unix domain socket.
-
-Focus:
-This program highlights the use of IO streaming, data serialization,
-and client-side error handling. It also shows how to configure the
-dialer to setup settings such as timeout and KeepAlive values. Further,
-the code also implements a simple connection-retry strategy when connecting
-
-Usage: client [options]
-options:
-  -e service endpoint or socket path, default localhost: 4040
-  -n network protocol name [tcp, unix], default tcp
-
-Once started a prompt is provided to interact with service
+// This program is a client implementation for the currency service
+// program. It sends JSON-encoded requests, i.e. {"Get":"USD"} and
+// receives JSON-encoded array of currency information directly
+// over TCP or unix domain socket.
+// 
+// Focus:
+// This program highlights the use of IO streaming, data serialization,
+// and client-side error handling. It also shows how to configure the
+// dialer to setup settings such as timeout and KeepAlive values. Further,
+// the code also implements a simple connection-retry strategy when connecting
+// 
+// Usage: client [options]
+// options:
+//   -e service endpoint or socket path, default localhost: 4040
+//   -n network protocol name [tcp, unix], default tcp
+// 
+// Once started a prompt is provided to interact with service
 func main() {
    // setup flags
    var addr string
