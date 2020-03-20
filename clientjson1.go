@@ -102,18 +102,32 @@ func main() {
 
       req := curr.CurrencyRequest{Get: param}
 
-   //Send Request:
-   // use json encoder to encode value of type curr.CurrencyRequest
-   // and stream it to the server via net.Conn.
-   if err := json.NewEncoder(conn).Encode(&req); err != nil {
-      switch err := err.(type) {
-      case net.Error:
-         fmt.Println("failed to send request:", err)
-         os.Exit(1)
-      default:
-         fmt.Println("failed to encode request:", err)
-         continue
+      //Send Request:
+      // use json encoder to encode value of type curr.CurrencyRequest
+      // and stream it to the server via net.Conn.
+      if err := json.NewEncoder(conn).Encode(&req); err != nil {
+         switch err := err.(type) {
+         case net.Error:
+            fmt.Println("failed to send request:", err)
+            os.Exit(1)
+         default:
+            fmt.Println("failed to encode request:", err)
+            continue
+         }
       }
+      
+      // Display response
+      var currencies []curr1.Currency
+      err = json.NewDecoder(conn).Decode(&currencies)
+      if err != nil {
+         switch err := err.(type) {
+         case net.Error:
+            fmt.Println("failed to receive response:", err)
+         default: 
+            fmt.Println("failed to decode response:", err)
+            continue
+         }
+      }
+      fmt.Println(currencies)
    }
-   
-   //
+} 
