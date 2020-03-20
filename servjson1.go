@@ -85,3 +85,36 @@ func main() {
       go handleConnection(conn)
    }
 }
+
+// handle client connection
+func handleConnection(conn net.Conn) {
+   defer func() {
+      if err := conn.Close(); err != nil {
+         log.Println("error closing connection:", err)
+      }
+   }()
+
+   // create json encoder/decoder using io.Conn as
+   // io.Writer and io.Reader for streaming IO
+   dec := json.NewDecoder(conn)
+   enc := json.NewEncoder(conn)
+
+   // command-loop
+   for {
+      // Next decode the incoming data into Go value curr.CurrencyRequest
+      var req curr.CurrencyRequest
+      if err := dec.Decode(&req); err != nil {
+         log.Println("failed to unmarshal request:", err)
+         return
+      }
+
+      // search currencies, result is []curr.Currency
+      result := curr.Find(currencies, req.Get)
+
+      // encode result to JSON array
+      if err := enc.Encode(&result); err != nil {
+         log.Println("failed to encode data:", err)
+         return
+      }
+   }
+} 
