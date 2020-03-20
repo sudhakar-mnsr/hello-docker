@@ -53,7 +53,7 @@ func main() {
       conn            net.Conn
       err             error
       connTries       = 0
-      Conn.MaxRetries = 3
+      connMaxRetries = 3
       connSleepRetry  = time.Second * 1 
    )
    for connTries < connMaxRetries {
