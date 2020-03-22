@@ -183,3 +183,11 @@ func handleConnection(conn net.Conn) {
 				continue
 			}
 		}
+
+		// renew deadline for 45 secs later
+		if err := conn.SetDeadline(time.Now().Add(time.Second * 90)); err != nil {
+			log.Println("failed to set deadline:", err)
+			return
+		}
+	}
+}
