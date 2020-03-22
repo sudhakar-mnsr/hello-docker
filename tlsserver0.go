@@ -80,3 +80,26 @@ func main() {
 	if err != nil {
 		log.Println(err)
 	}
+	defer ln.Close()
+	log.Println("**** Global Currency Service (secure) ***")
+	log.Printf("Service started: (%s) %s; server cert %s\n", network, addr, cert)
+
+	// delay to sleep when accept fails with a temporary error
+	acceptDelay := time.Millisecond * 10
+	acceptCount := 0
+
+	// connection loop
+	for {
+		conn, err := ln.Accept()
+		if err != nil {
+			switch e := err.(type) {
+			case net.Error:
+				// if temporary error, attempt to connect again
+				if e.Temporary() {
+					if acceptCount > 5 {
+						log.Fatalf("unable to connect after %d retries: %v", acceptCount, err)
+					}
+					acceptDelay *= 2
+					acceptCount++
+					time.Sleep(acceptDelay)
+					continue
