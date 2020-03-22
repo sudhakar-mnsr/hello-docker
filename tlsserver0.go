@@ -103,3 +103,18 @@ func main() {
 					acceptCount++
 					time.Sleep(acceptDelay)
 					continue
+				}
+			default:
+				log.Println(err)
+				if err := conn.Close(); err != nil {
+					log.Fatal(err)
+				}
+				continue
+			}
+			acceptDelay = time.Millisecond * 10
+			acceptCount = 0
+		}
+		log.Println("securely connected to remote client ", conn.RemoteAddr())
+		go handleConnection(conn)
+	}
+}
