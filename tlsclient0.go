@@ -47,3 +47,19 @@ func main() {
 
 	certPool := x509.NewCertPool()
 	certPool.AppendCertsFromPEM(caCert)
+
+	// TLS configuration
+	tlsConf := &tls.Config{
+		InsecureSkipVerify: false,
+		RootCAs:            certPool,
+	}
+
+	// create a tls.Conn to connect to server
+	conn, err := tls.Dial(network, addr, tlsConf)
+	if err != nil {
+		log.Fatal("failed to create socket:", err)
+	}
+	defer conn.Close()
+	fmt.Println("connected to currency service: ", addr)
+
+	var param string
