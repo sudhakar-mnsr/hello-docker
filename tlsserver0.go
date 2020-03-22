@@ -152,3 +152,16 @@ func handleConnection(conn net.Conn) {
 				}
 				log.Println("network error:", err)
 				return
+			default:
+				if err == io.EOF {
+					log.Println("closing connection:", err)
+					return
+				}
+				enc := json.NewEncoder(conn)
+				if encerr := enc.Encode(&curr.CurrencyError{Error: err.Error()}); encerr != nil {
+					log.Println("failed error encoding:", encerr)
+					return
+				}
+				continue
+			}
+		}
